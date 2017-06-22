@@ -358,7 +358,7 @@ post_makeinstall_target() {
   debug_strip $INSTALL/usr/lib/kodi/kodi.bin
 
   case $PROJECT in
-    S805|S905|S912)
+    S8X2|S805|S905|S912)
       cp $PKG_DIR/scripts/aml-hdmimonitor.sh $INSTALL/usr/lib/kodi/aml-hdmimonitor.sh
       ;;
   esac
@@ -376,7 +376,7 @@ post_install() {
   enable_service kodi-lirc-suspend.service
 
   case $PROJECT in
-    S805|S905|S912)
+    S8X2|S805|S905|S912)
       enable_service kodi-aml-hdmimonitor.service
       ;;
   esac
