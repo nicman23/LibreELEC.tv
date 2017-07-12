@@ -54,7 +54,7 @@ make_target() {
     if [ -f $PKG_DIR/config/generic.config ]; then
       cp $PKG_DIR/config/generic.config v4l/.config
     fi
-  elif [ "$PROJECT" != "S805" ] && [ "$PROJECT" != "S905" ] && [ "$PROJECT" != "S912" ]; then
+  elif [ "$PROJECT" != "S8X2" ] && [ "$PROJECT" != "S805" ] && [ "$PROJECT" != "S905" ] && [ "$PROJECT" != "S912" ]; then
     if [ -f $PKG_DIR/config/usb.config ]; then
       cp $PKG_DIR/config/usb.config v4l/.config
     fi
