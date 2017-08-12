@@ -64,8 +64,13 @@ case "$LINUX" in
     PKG_SOURCE_DIR="$KERNEL_SOURCE_DIR"
     PKG_PATCH_DIRS="$KERNEL_PATCH_DIRS"
     ;;
+  default-rpi)
+    PKG_VERSION="4.9.41"
+    PKG_URL="http://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
+    PKG_PATCH_DIRS="default-rpi"
+    ;;
   *)
-    PKG_VERSION="4.11.8"
+    PKG_VERSION="4.11.12"
     PKG_URL="http://www.kernel.org/pub/linux/kernel/v4.x/$PKG_NAME-$PKG_VERSION.tar.xz"
     PKG_PATCH_DIRS="default"
     ;;
