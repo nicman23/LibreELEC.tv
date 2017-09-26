@@ -35,6 +35,9 @@
       HD18Q)
         KERNEL_UBOOT_EXTRA_TARGET="meson8b_hd18q.dtd meson8b_hd18q.dtb"
         ;;
+      VERO2)
+        KERNEL_UBOOT_EXTRA_TARGET="meson8b_vero2.dtd meson8b_vero2.dtb"
+        ;;
       m201d)
         KERNEL_UBOOT_EXTRA_TARGET="meson8b_m201d.dtd meson8b_m201d.dtb"
         ;;
