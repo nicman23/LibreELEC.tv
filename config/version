@@ -1,5 +1,4 @@
 # VERSION: set full version, use "devel" for development version
-
   LIBREELEC_VERSION="8.2.RC4"
 
 # OS_VERSION: OS Version
