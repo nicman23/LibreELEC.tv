@@ -61,8 +61,10 @@ fi
 
 case "$TARGET_ARCH" in
   arm)
-    CFLAGS="$CFLAGS -mthumb"
-    CFLAGS=$(echo "$CFLAGS" | sed 's/-Os/-O3/g')
+    FFMPEG_TABLES="--enable-hardcoded-tables"
+    ;;
+  *)
+    FFMPEG_TABLES="--disable-hardcoded-tables"
     ;;
 esac
 
@@ -156,6 +158,7 @@ configure_target() {
               $FFMPEG_VDPAU \
               --disable-dxva2 \
               --enable-runtime-cpudetect \
+              $FFMPEG_TABLES \
               --disable-memalign-hack \
               --disable-encoders \
               --enable-encoder=ac3 \
