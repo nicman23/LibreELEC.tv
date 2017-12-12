@@ -58,13 +58,15 @@ echo 1 > /sys/class/graphics/fb1/blank
 
 # Set framebuffer geometry to match the resolution
 case $display_mode in
-  480*)            X=720  Y=480  ;;
-  576*)            X=720  Y=576  ;;
-  720p*)           X=1280 Y=720  ;;
-  *)               X=1920 Y=1080 ;;
+   480*)           X=720  Y=480  ;;
+   576*)           X=720  Y=576  ;;
+      *)           X=1280 Y=720  ;;
+  1080*)           X=1920 Y=1080 ;;
+  4k2k*hz|2160p*)  X=3840 Y=2160 ;;
+  4k2ksmpte|smpte24hz)  X=4096 Y=2160 ;;
 esac
 
-fbset -fb /dev/fb0 -g $X $Y 1920 2160 32
+fbset -fb /dev/fb0 -g $X $Y 1280 1440 32
 fbset -fb /dev/fb1 -g 32 32 32 32 32
 echo 0 > /sys/class/graphics/fb0/free_scale
 echo 0 > /sys/class/graphics/fb1/free_scale
@@ -77,7 +79,7 @@ cmdline=$(cat /proc/cmdline)
 
 # Add information where to run OpenELEC from
 if [ -n "$bootfromsd" ]; then
-  cmdline="$cmdline BOOT_IMAGE=kernel.img boot=/dev/mmcblk0p1 disk=/dev/mmcblk0p2"
+  cmdline="$cmdline BOOT_IMAGE=kernel.img boot=LABEL=LIBREELEC disk=LABEL=LIBREELEC_DISK"
 elif [ -n "$bootfromusb" ]; then
   cmdline="$cmdline BOOT_IMAGE=kernel.img boot=LABEL=LIBREELEC disk=LABEL=LIBREELEC_DISK"
 else
