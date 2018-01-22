@@ -2,8 +2,8 @@
 # setup system defaults
 ################################################################################
 
-    if [ -z "$SYSTEM" ]; then
-      SYSTEM="MXQ"
+    if [ -z "$BOARD" ]; then
+      BOARD="MXQ"
     fi
 
   # Setup controls which processor should be targeted for generated code.
@@ -29,7 +29,7 @@
     KERNEL_TARGET="uImage"
 
   # Kernel extra targets to build
-    case $SYSTEM in
+    case $BOARD in
       MXQ)
         KERNEL_UBOOT_EXTRA_TARGET="meson8b_mxq.dtd meson8b_mxq.dtb"
         ;;
@@ -110,7 +110,7 @@
   # Space separated list is supported,
   # e.g. ADDITIONAL_DRIVERS="DRIVER1 DRIVER2"
     ADDITIONAL_DRIVERS="RTL8192CU RTL8192DU RTL8192EU RTL8812AU mt7610u media_build \
-                        mt7601u-aml RTL8188EU-aml RTL8189ES-aml RTL8189FS-aml RTL8723BS-aml RTL8822BU-aml ssv6xxx-aml"
+                        mt7601u-aml RTL8188EU-aml RTL8189ES-aml RTL8189FS-aml RTL8723BS-aml RTL8723DS-aml RTL8822BU-aml ssv6xxx-aml"
 
   # additional Firmware to use (dvb-firmware, misc-firmware, wlan-firmware)
   # Space separated list is supported,

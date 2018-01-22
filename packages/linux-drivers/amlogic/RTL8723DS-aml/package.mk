@@ -16,15 +16,15 @@
 #  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="RTL8822BU-aml"
-PKG_VERSION="9df3607"
+PKG_NAME="RTL8723DS-aml"
+PKG_VERSION="fb4adf7"
 PKG_REV="1"
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
 # amlogic: PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/wifi/"
-PKG_SITE="https://github.com/khadas/android_hardware_wifi_realtek_drivers_8822bu"
+PKG_SITE="https://github.com/khadas/android_hardware_wifi_realtek_drivers_8723ds"
 PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
-PKG_SOURCE_DIR="android_hardware_wifi_realtek_drivers_8822bu-$PKG_VERSION*"
+PKG_SOURCE_DIR="android_hardware_wifi_realtek_drivers_8723ds-$PKG_VERSION*"
 PKG_DEPENDS_TARGET="toolchain linux"
 PKG_NEED_UNPACK="$LINUX_DEPENDS"
 PKG_PRIORITY="optional"
@@ -46,7 +46,7 @@ post_unpack() {
 }
 
 make_target() {
-  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/rtl8822BU \
+  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/rtl8723DS \
        ARCH=$TARGET_KERNEL_ARCH \
        KSRC=$(kernel_path) \
        CROSS_COMPILE=$TARGET_PREFIX \
@@ -55,5 +55,5 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
-    cp $PKG_BUILD/rtl8822BU/*.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
+    cp $PKG_BUILD/rtl8723DS/*.ko $INSTALL/usr/lib/modules/$(get_module_dir)/$PKG_NAME
 }
