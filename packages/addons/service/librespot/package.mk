@@ -1,20 +1,34 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2017 Shane Meagher (shanemeagher)
-# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2017-present Team LibreELEC
+#      Copyright (C) 2017 Shane Meagher (shanemeagher)
+#
+#  LibreELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  LibreELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="librespot"
-PKG_VERSION="96557b4ec1c45413cdf34673695f1269f99e3545"
-PKG_SHA256="09fe8f8de50d25e460bdc75d02239961336ac4db837509386ac17057b00cc49a"
-PKG_REV="113"
+PKG_VERSION="431be9e"
+PKG_REV="111"
 PKG_ARCH="any"
 PKG_LICENSE="MIT"
-PKG_SITE="https://github.com/librespot-org/librespot/"
-PKG_URL="https://github.com/librespot-org/librespot/archive/$PKG_VERSION.zip"
+PKG_SITE="https://github.com/librespot-org/$PKG_NAME/"
+PKG_URL="https://github.com/librespot-org/$PKG_NAME/archive/$PKG_VERSION.zip"
 PKG_DEPENDS_TARGET="toolchain avahi pulseaudio pyalsaaudio rust"
 PKG_SECTION="service"
 PKG_SHORTDESC="Librespot: play Spotify through LibreELEC using a Spotify app as a remote"
 PKG_LONGDESC="Librespot ($PKG_VERSION) plays Spotify through LibreELEC using the open source librespot library using a Spotify app as a remote."
-PKG_TOOLCHAIN="manual"
+PKG_AUTORECONF="no"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="Librespot"
@@ -24,6 +38,7 @@ PKG_MAINTAINER="Anton Voyl (awiouy)"
 configure_target() {
   . "$TOOLCHAIN/.cargo/env"
   export PKG_CONFIG_ALLOW_CROSS=0
+  strip_lto
 }
 
 make_target() {
@@ -33,9 +48,13 @@ make_target() {
   $STRIP librespot
 }
 
+makeinstall_target() {
+  :
+}
+
 addon() {
   mkdir -p "$ADDON_BUILD/$PKG_ADDON_ID"
-  cp "$(get_build_dir pyalsaaudio)/.install_pkg/usr/lib/$PKG_PYTHON_VERSION/site-packages/alsaaudio.so" \
+  cp "$(get_build_dir pyalsaaudio)/.install_pkg/usr/lib/python2.7/site-packages/alsaaudio.so" \
      "$ADDON_BUILD/$PKG_ADDON_ID"
 
   mkdir -p "$ADDON_BUILD/$PKG_ADDON_ID/bin"

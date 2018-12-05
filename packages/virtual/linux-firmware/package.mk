@@ -3,6 +3,7 @@
 
 PKG_NAME="linux-firmware"
 PKG_VERSION=""
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE=""
 PKG_URL=""

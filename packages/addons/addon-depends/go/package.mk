@@ -3,8 +3,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="go"
-PKG_VERSION="1.10.5"
-PKG_SHA256="afe38b3c6a91e7e6c2bae0cf7427d1080ed3b7d8c044504400db56c3b72bb082"
+PKG_VERSION="1.7.5"
+PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="https://golang.org"
 PKG_URL="https://github.com/golang/go/archive/${PKG_NAME}${PKG_VERSION}.tar.gz"
@@ -22,11 +22,7 @@ PKG_TOOLCHAIN="manual"
 configure_host() {
   export GOOS=linux
   export GOROOT_FINAL=$TOOLCHAIN/lib/golang
-  if [ -x /usr/lib/go/bin/go ]; then
-    export GOROOT_BOOTSTRAP=/usr/lib/go
-  else
-    export GOROOT_BOOTSTRAP=/usr/lib/golang
-  fi
+  export GOROOT_BOOTSTRAP=/usr/lib/golang
   export GOARCH=amd64
 }
 

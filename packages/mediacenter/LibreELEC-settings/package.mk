@@ -3,9 +3,9 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="LibreELEC-settings"
-PKG_VERSION="e93c231e4372a9a08e786175f155f13ac3f9140c"
-PKG_SHA256="844bb2abc81d9deda80611305af52084d7d888e14da91e2257ac7ca5d466b8ac"
-PKG_LICENSE="GPL"
+PKG_VERSION="0768930"
+PKG_ARCH="any"
+PKG_LICENSE="prop."
 PKG_SITE="https://libreelec.tv"
 PKG_URL="https://github.com/LibreELEC/service.libreelec.settings/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain Python2 connman pygobject dbus-python"
@@ -25,11 +25,11 @@ post_makeinstall_target() {
 
   ADDON_INSTALL_DIR=$INSTALL/usr/share/kodi/addons/service.libreelec.settings
 
-  $TOOLCHAIN/bin/python -Wi -t -B $TOOLCHAIN/lib/$PKG_PYTHON_VERSION/compileall.py $ADDON_INSTALL_DIR/resources/lib/ -f
-  rm -rf $(find $ADDON_INSTALL_DIR/resources/lib/ -name "*.py")
+  python -Wi -t -B $TOOLCHAIN/lib/python2.7/compileall.py $INSTALL/usr/share/kodi/addons/service.libreelec.settings/resources/lib/ -f
+  rm -rf `find $INSTALL/usr/share/kodi/addons/service.libreelec.settings/resources/lib/ -name "*.py"`
 
-  $TOOLCHAIN/bin/python -Wi -t -B $TOOLCHAIN/lib/$PKG_PYTHON_VERSION/compileall.py $ADDON_INSTALL_DIR/oe.py -f
-  rm -rf $ADDON_INSTALL_DIR/oe.py
+  python -Wi -t -B $TOOLCHAIN/lib/python2.7/compileall.py $INSTALL/usr/share/kodi/addons/service.libreelec.settings/oe.py -f
+  rm -rf $INSTALL/usr/share/kodi/addons/service.libreelec.settings/oe.py
 }
 
 post_install() {

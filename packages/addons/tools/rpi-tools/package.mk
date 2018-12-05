@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="rpi-tools"
-PKG_VERSION="1.0"
-PKG_REV="105"
+PKG_VERSION=""
+PKG_REV="104"
 PKG_ARCH="arm"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"

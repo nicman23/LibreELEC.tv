@@ -3,14 +3,18 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="runc"
-PKG_VERSION="69663f0bd4b60df09991c08812a60108003fa340"
-PKG_SHA256="994a3a0447fcbf7e37614b02aa5604d2d6b9fdb41e6870d8d3ff1138ed6e61ef"
+PKG_VERSION="9df8b30"
+PKG_ARCH="any"
 PKG_LICENSE="APL"
 PKG_SITE="https://github.com/opencontainers/runc"
 PKG_URL="https://github.com/opencontainers/runc/archive/${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain go:host"
-PKG_LONGDESC="A CLI tool for spawning and running containers according to the OCI specification."
-PKG_TOOLCHAIN="manual"
+PKG_SECTION="system"
+PKG_SHORTDESC="runc is a CLI tool for spawning and running containers according to the OCI specification"
+PKG_LONGDESC="runc is a CLI tool for spawning and running containers according to the OCI specification"
+
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
 pre_make_target() {
   case $TARGET_ARCH in
@@ -40,16 +44,11 @@ pre_make_target() {
   export CGO_CFLAGS=$CFLAGS
   export LDFLAGS="-w -extldflags -static -X main.gitCommit=${PKG_VERSION} -X main.version=$(cat ./VERSION) -extld $CC"
   export GOLANG=$TOOLCHAIN/lib/golang/bin/go
-  export GOPATH=$PKG_BUILD/.gopath
+  export GOPATH=$PKG_BUILD.gopath:$PKG_BUILD/Godeps/_workspace/
   export GOROOT=$TOOLCHAIN/lib/golang
   export PATH=$PATH:$GOROOT/bin
 
-  mkdir -p $PKG_BUILD/.gopath
-  if [ -d $PKG_BUILD/vendor ]; then
-    mv $PKG_BUILD/vendor $PKG_BUILD/.gopath/src
-  fi
-
-  ln -fs $PKG_BUILD $PKG_BUILD/.gopath/src/github.com/opencontainers/runc
+  ln -fs $PKG_BUILD $PKG_BUILD/Godeps/_workspace/src/github.com/opencontainers/runc
 }
 
 make_target() {

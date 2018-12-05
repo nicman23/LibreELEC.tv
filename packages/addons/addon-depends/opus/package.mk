@@ -1,14 +1,32 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of LibreELEC - https://libreelec.tv
+#      Copyright (C) 2016-present Team LibreELEC
+#
+#  LibreELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  LibreELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with LibreELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="opus"
-PKG_VERSION="1.3"
-PKG_SHA256="4f3d69aefdf2dbaf9825408e452a8a414ffc60494c70633560700398820dc550"
+PKG_VERSION="1.2.1"
+PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://www.opus-codec.org"
-PKG_URL="https://archive.mozilla.org/pub/opus/$PKG_NAME-$PKG_VERSION.tar.gz"
+PKG_URL="https://archive.mozilla.org/pub/$PKG_NAME/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain"
-PKG_LONGDESC="Codec designed for interactive speech and audio transmission over the Internet."
+PKG_SECTION="audio"
+PKG_SHORTDESC="Codec designed for interactive speech and audio transmission over the Internet"
+PKG_LONGDESC="Codec designed for interactive speech and audio transmission over the Internet"
+PKG_AUTORECONF="no"
 
 if [ "$TARGET_ARCH" = "arm" ]; then
   PKG_FIXED_POINT="--enable-fixed-point"

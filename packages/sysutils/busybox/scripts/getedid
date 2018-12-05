@@ -132,25 +132,8 @@ check_content() {
 }
 
 
-check_kernel() {
-  # determine which kernel is in use and store it in a compareable format. This will probably be deprecated for LE10
-  kernel="$(uname -r | sed 's/[^0-9\.].*//g' | awk -F. '{ printf "%d%02d%03d\n",int($1),int($2),int($3) }')"
-}
-
-
-create_edid() {
-  # create edid 
-  mkdir -p /tmp/cpio/lib/firmware/edid
-  cat "/sys/class/drm/$card/edid" > /tmp/cpio/lib/firmware/edid/edid.bin
-
-  # create cpio archive
-  cd /tmp/cpio/
-  find . -print | cpio -ov -H newc > /storage/edid.cpio
-}
-
-
-intel_amd() {
-  # check which output is connnected:
+intel() {
+  #check which output is connnected:
   counter=0
   for i in /sys/class/drm/*; do
     if [ "$(cat "$i"/status 2>/dev/null)" = "connected" ]; then

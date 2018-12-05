@@ -4,6 +4,7 @@
 
 PKG_NAME="mediacenter"
 PKG_VERSION=""
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"
 PKG_URL=""
@@ -32,15 +33,11 @@ if [ "$MEDIACENTER" = "kodi" ]; then
   fi
 
 # other packages
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET xmlstarlet"
-
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET LibreELEC-settings \
+                                          xmlstarlet"
+  
   if [ "$JOYSTICK_SUPPORT" = "yes" ]; then
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET peripheral.joystick"
-  fi
-
-  get_graphicdrivers
-  if listcontains "$GRAPHIC_DRIVERS" "(i915|i965)"; then
-    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET intel-vaapi-driver"
   fi
 
 fi

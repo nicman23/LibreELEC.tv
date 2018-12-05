@@ -4,7 +4,7 @@
 
 PKG_NAME="vdr-plugin-restfulapi"
 PKG_VERSION="0.2.6.5"
-PKG_SHA256="116f2ec08eb8d228ef5da64fe4039f2c00ae4d76388f0f34ab329c866d928e1f"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/yavdr/vdr-plugin-restfulapi"
 PKG_URL="https://github.com/yavdr/${PKG_NAME}/releases/download/${PKG_VERSION}/${PKG_NAME}-${PKG_VERSION}.tar.gz"
@@ -35,4 +35,9 @@ post_make_target() {
   LIB_NAME=lib${PKG_NAME/-plugin/}
 
   cp --remove-destination $PKG_BUILD/${LIB_NAME}.so $PKG_BUILD/${LIB_NAME}.so.${VDR_APIVERSION}
+  $STRIP libvdr-*.so*
+}
+
+makeinstall_target() {
+  : # installation not needed, done by create-addon script
 }

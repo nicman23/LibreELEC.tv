@@ -2,8 +2,8 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="readline"
-PKG_VERSION="7.0"
-PKG_SHA256="750d437185286f40a369e1e4f4764eda932b9459b5ec9a731628393dd3d32334"
+PKG_VERSION="6.3"
+PKG_ARCH="any"
 PKG_LICENSE="MIT"
 PKG_SITE="http://www.gnu.org/software/readline/"
 PKG_URL="http://ftpmirror.gnu.org/readline/$PKG_NAME-$PKG_VERSION.tar.gz"

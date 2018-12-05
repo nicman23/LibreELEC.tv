@@ -125,7 +125,7 @@ print_crash_report()
   OFILE="$FILE"
   FILE="$CRASHLOG_DIR/kodi_crashlog_$DATE.log"
   mv "$OFILE" "$FILE"
-  ln -sf "$(basename $FILE)" "$CRASHLOG_DIR/kodi_crash.log"
+  ln -sf "$FILE" "$CRASHLOG_DIR/kodi_crash.log"
   echo "Crash report available at $FILE"
 }
 
@@ -137,10 +137,8 @@ fi
 find /storage/.cache/cores -type f -delete
 
 # clean zero-byte database files that prevent migration/startup
-for file in $KODI_ROOT/userdata/Database/*.db; do
-  if [ -e "$file" ]; then
-    [ -s $file ] || rm -f $file
-  fi
+for file in /storage/.kodi/userdata/Database/*.db; do
+  [ -s $file ] || rm -f $file
 done
 
 /usr/lib/kodi/kodi.bin $SAVED_ARGS

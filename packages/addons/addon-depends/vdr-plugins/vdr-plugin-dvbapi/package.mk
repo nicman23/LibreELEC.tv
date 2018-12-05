@@ -3,8 +3,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="vdr-plugin-dvbapi"
-PKG_VERSION="7d51cc457823156d446d06c6ae40f850958fa735"
-PKG_SHA256="b16840574802581950343942559797aeccbc4a8fc216901ad0cea42f420bfd7c"
+PKG_VERSION="d7c7587"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/manio/vdr-plugin-dvbapi"
 PKG_URL="https://github.com/manio/vdr-plugin-dvbapi/archive/$PKG_VERSION.tar.gz"
@@ -31,4 +31,9 @@ post_make_target() {
   LIB_NAME=lib${PKG_NAME/-plugin/}
 
   cp --remove-destination $PKG_BUILD/${LIB_NAME}.so $PKG_BUILD/${LIB_NAME}.so.${VDR_APIVERSION}
+  $STRIP libvdr-*.so*
+}
+
+makeinstall_target() {
+  : # installation not needed, done by create-addon script
 }

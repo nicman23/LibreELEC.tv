@@ -3,8 +3,7 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="xf86-video-nvidia-legacy"
-PKG_VERSION="340.107"
-PKG_SHA256="6dc6f183c69c414670d8adef0286a2362eedd6e16ec6dfae811e48ea4a4505dc"
+PKG_VERSION="340.106"
 PKG_ARCH="x86_64"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.nvidia.com/"

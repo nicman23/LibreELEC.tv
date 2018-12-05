@@ -107,6 +107,11 @@ case "$DISTRO" in
       ;;
 esac
 
+if ! perl -MJSON -e 'exit(0);' 2>/dev/null; then
+  files="$files perl/JSON.pm"
+  files_pkg="$files_pkg libjson-perl"
+fi
+
 # project specific dependencies
 if [ -n "$EXTRA_DEPS" ] ; then
   deps+=($EXTRA_DEPS)
@@ -127,9 +132,7 @@ get_deps
 
 if [ "${#need[@]}" -gt 0 ]; then
   echo "**** Your system lacks the following tools needed to build $DISTRONAME ****"
-  for i in "${!need[@]}"; do
-    echo "${need[$i]} provided by ${need_pkg[$i]}"
-  done
+  echo $need provided by $need_pkg
   echo "**** You seem to use a $DISTRO system ****"
 
   if command -v sudo >/dev/null; then

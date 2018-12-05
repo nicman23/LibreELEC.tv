@@ -3,8 +3,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pcre"
-PKG_VERSION="8.42"
-PKG_SHA256="2cd04b7c887808be030254e8d77de11d3fe9d4505c39d4b15d2664ffe8bf9301"
+PKG_VERSION="8.39"
+PKG_ARCH="any"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.pcre.org/"
 PKG_URL="https://ftp.pcre.org/pub/pcre/$PKG_NAME-$PKG_VERSION.tar.bz2"
@@ -14,8 +14,11 @@ PKG_LONGDESC="A set of functions that implement regular expression pattern match
 PKG_TOOLCHAIN="configure"
 PKG_BUILD_FLAGS="+pic"
 
+PKG_IS_ADDON="no"
+PKG_USE_CMAKE="no"
+PKG_AUTORECONF="no"
+
 PKG_CONFIGURE_OPTS_HOST="--prefix=$TOOLCHAIN \
-             --enable-static \
              --enable-utf8 \
              --enable-unicode-properties \
              --with-gnu-ld"

@@ -341,138 +341,12 @@ setup_toolchain() {
   esac
 }
 
-create_meson_conf() {
-  local endian root
-  case "$1" in
-    target|init)    endian="little"
-                    root="$SYSROOT_PREFIX/usr"
-                    ;;
-    host|bootstrap) endian="big"
-                    root="$TOOLCHAIN"
-                    ;;
-  esac
-
-  cat > $2 <<EOF
-[binaries]
-c = '$CC'
-cpp = '$CXX'
-ar = '$AR'
-strip = '$STRIP'
-pkgconfig = '$PKG_CONFIG'
-llvm-config = '$SYSROOT_PREFIX/usr/bin/llvm-config-host'
-
-[host_machine]
-system = 'linux'
-cpu_family = '$TARGET_ARCH'
-cpu = '$TARGET_SUBARCH'
-endian = '$endian'
-
-[properties]
-root = '$root'
-$(python -c "import os; print('c_args = {}'.format([x for x in os.getenv('CFLAGS').split()]))")
-$(python -c "import os; print('c_link_args = {}'.format([x for x in os.getenv('LDFLAGS').split()]))")
-EOF
+kernel_path() {
+  get_build_dir linux
 }
 
-# unset all PKG_* vars apart from those exported by setup_toolchain, then set default values
-reset_pkg_vars() {
-  local vars var
-
-  for var in ${!PKG_*}; do
-    if [ "${var}" = "PKG_CONFIG" ] || \
-       [ "${var}" = "PKG_CONFIG_PATH" ] || \
-       [ "${var}" = "PKG_CONFIG_LIBDIR" ] || \
-       [ "${var}" = "PKG_CONFIG_SYSROOT_DIR" ] || \
-       [ "${var}" = "PKG_CONFIG_ALLOW_SYSTEM_CFLAGS" ] || \
-       [ "${var}" = "PKG_CONFIG_ALLOW_SYSTEM_LIBS" ]; then
-       continue
-    fi
-    vars+="${var} "
-  done
-  [ -n "${vars}" ] && unset -v ${vars}
-
-  PKG_VERSION="0.0invalid"
-  PKG_REV="0"
-  PKG_ARCH="any"
-  PKG_LICENSE="unknown"
-  PKG_TOOLCHAIN="auto"
-  PKG_IS_ADDON="no"
-  PKG_PYTHON_VERSION="python2.7"
-}
-
-set_debug_depends() {
-  local pkg dep_pkg map tmp_array mpkg bpkg kvpair
-
-  _DEBUG_DEPENDS_LIST=""
-  _DEBUG_PACKAGE_LIST=""
-  if [ "${DEBUG:-no}" != "no" ]; then
-    # Convert DEBUG_GROUPS into array of groups, adding "all" if required
-    declare -A debug_group_map
-    for kvpair in ${DEBUG_GROUPS}; do
-      debug_group_map+=(["${kvpair%=*}"]="${kvpair#*=}")
-    done
-    [ -z "${debug_group_map["all"]}" ] && debug_group_map+=(["all"]="all")
-
-    # Expand $DEBUG into $_DEBUG_PACKAGE_LIST
-    for pkg in ${DEBUG//,/ }; do
-      [ "${pkg}" = "yes" ] && pkg="${DEBUG_GROUP_YES:-all}"
-      map="${debug_group_map["${pkg}"]}"
-      [ -z "${map}" ] && map="${pkg}"
-      for mpkg in ${map//,/ }; do
-        [[ ${mpkg} =~ ^[!-] ]] && bpkg="${mpkg:1}" || bpkg="${mpkg}"
-        [[ ${bpkg} =~ \+$ ]] && bpkg="${bpkg::-1}"
-        # Remove existing instances of this package
-        listcontains "${_DEBUG_PACKAGE_LIST}" "[!-]?${bpkg}[+]?" && _DEBUG_PACKAGE_LIST="$(listremoveitem "${_DEBUG_PACKAGE_LIST}" "[!-]?${bpkg}[+]?")"
-        # Add package
-        _DEBUG_PACKAGE_LIST+=" ${mpkg}"
-      done
-    done
-    # Use array word splitting to squash spaces
-    tmp_array=(${_DEBUG_PACKAGE_LIST})
-    _DEBUG_PACKAGE_LIST="${tmp_array[@]}"
-
-    # Determine dependencies for each package+
-    for pkg in ${_DEBUG_PACKAGE_LIST}; do
-      if [ "${pkg}" != "all" ] && [[ ! ${pkg} =~ ^[!-] ]]; then
-        ! listcontains "${_DEBUG_DEPENDS_LIST}" "${pkg}" && _DEBUG_DEPENDS_LIST+=" ${pkg}"
-        [[ ! ${pkg} =~ \+$ ]] && continue
-        for dep_pkg in $(get_pkg_variable ${pkg::-1} PKG_DEPENDS_TARGET); do
-          [ "${dep_pkg}" = "toolchain" ] && continue
-          [[ ${dep_pkg} =~ ^.*:host$ ]] && continue
-          ! listcontains "${_DEBUG_DEPENDS_LIST}" "${dep_pkg}" && _DEBUG_DEPENDS_LIST+=" ${dep_pkg}"
-        done
-      fi
-    done
-    tmp_array=(${_DEBUG_DEPENDS_LIST})
-    _DEBUG_DEPENDS_LIST="${tmp_array[@]}"
-  fi
-  export _DEBUG_DEPENDS_LIST _DEBUG_PACKAGE_LIST
-}
-
-# Return 0 if building with debug is enabled for the current package (or all packages).
-# Examples: DEBUG=yes  DEBUG=all  DEBUG='all,!linux'  DEBUG=kodi  DEBUG=kodi,samba
-build_with_debug() {
-  if [ "${DEBUG:-no}" != "no" -a -n "${PKG_NAME}" -a -n "${_DEBUG_DEPENDS_LIST+x}" ]; then
-    # Return 1 if this package is not to be built with debug
-    listcontains "${_DEBUG_PACKAGE_LIST}" "[!-]${PKG_NAME}[+]?" && return 1
-
-    # Build all packages with debug
-    listcontains "${_DEBUG_PACKAGE_LIST}" "all" && return 0
-
-    # Debugging is enabled for at least one package, so enable debug in the "debug" virtual package
-    [ "${PKG_NAME}" = "debug" ] && return 0
-
-    # Build addons with debug if we're building the mediacenter with debug and with dependencies
-    [ "${PKG_IS_ADDON}" = "yes" -o "${PKG_IS_ADDON}" = "embedded" ] && listcontains "${_DEBUG_DEPENDS_LIST}" "${MEDIACENTER}\+" && return 0
-
-    # Build kernel packages with debug if we're building the kernel with debug and with dependencies
-    [ "${PKG_IS_KERNEL_PKG}" = "yes" ] && listcontains "${_DEBUG_DEPENDS_LIST}" "linux\+" && return 0
-
-    # Build this package with debug if it's a resolved dependency
-    listcontains "${_DEBUG_DEPENDS_LIST}" "${PKG_NAME}" && return 0
-  fi
-
-  return 1
+kernel_version() {
+  get_pkg_version linux
 }
 
 # strip
@@ -486,53 +360,34 @@ debug_strip() {
   fi
 }
 
-init_package_cache() {
-  local _ANCHOR="@?+?@" DIR
-
-  # If the package caches are unset, then populate them
-  if [ -z "${_CACHE_PACKAGE_LOCAL}" -o -z "${_CACHE_PACKAGE_GLOBAL}" ]; then
-    _CACHE_PACKAGE_LOCAL="${BUILD}/.cache_package_local"
-    _CACHE_PACKAGE_GLOBAL="${BUILD}/.cache_package_global"
-    mkdir -p "${BUILD}"
-    : > "${_CACHE_PACKAGE_LOCAL}"
-    : > "${_CACHE_PACKAGE_GLOBAL}"
-
-    # cache project/device folder for a package
-    if [ -n $DEVICE ]; then
-      for DIR in $(find $ROOT/projects/$PROJECT/devices/$DEVICE/packages -type d 2>/dev/null); do
-        [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${_CACHE_PACKAGE_LOCAL}"
-      done
-    fi
-
-    # cache project folder for a package
-    for DIR in $(find $ROOT/projects/$PROJECT/packages -type d 2>/dev/null); do
-      [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${_CACHE_PACKAGE_LOCAL}"
-    done
-
-    # cache packages folder
-    for DIR in $(find $ROOT/$PACKAGES -type d 2>/dev/null); do
-      [ -r "$DIR/package.mk" ] && echo "${DIR}${_ANCHOR}" >> "${_CACHE_PACKAGE_GLOBAL}"
-    done
-
-    export _CACHE_PACKAGE_LOCAL _CACHE_PACKAGE_GLOBAL
+# get package's build dir
+get_build_dir() {
+  local _PKG_NAME="$(get_pkg_variable "$1" PKG_NAME)" _PKG_VERSION="$(get_pkg_version "$1")"
+  if [ -n "$_PKG_NAME" -a -n "$_PKG_VERSION" ]; then
+    echo $BUILD/${_PKG_NAME}-${_PKG_VERSION}
   fi
 }
 
-load_build_config() {
-  if [ -d "${1}" -a -f ${1}/.build.conf ]; then
-    source ${1}/.build.conf
-    return 0
+get_pkg_version() {
+  get_pkg_variable "$1" PKG_VERSION
+}
+
+get_pkg_directory() {
+  get_pkg_variable "$1" PKG_DIR
+}
+
+# get variable ($2) for package ($1)
+get_pkg_variable() {
+  if [ -n "$1" -a -n "$2" ] ; then
+    cd $ROOT
+    . config/options $1
+    echo "${!2}"
   fi
   return 1
 }
 
-save_build_config() {
-  local var
-  mkdir -p ${BUILD}
-  rm -f ${BUILD}/.build.conf
-  for var in PROJECT DEVICE ARCH DEBUG BUILD_SUFFIX; do
-    echo "export ${var}=\"${!var}\"" >> ${BUILD}/.build.conf
-  done
+tolower() {
+  echo "$@" | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz
 }
 
 check_path() {
@@ -663,11 +518,7 @@ do_autoreconf() {
 
   if [ -e "$TOOLCHAIN/bin/autoreconf" -a -e "$INTLTOOLIZE" ]; then
     mkdir -p $ACLOCAL_DIR
-    if [ -e "$LIBTOOLIZE" ]; then
-      export AUTORECONF="$TOOLCHAIN/bin/autoreconf --verbose --force --install -I $ACLOCAL_DIR"
-    else
-      export AUTORECONF="$TOOLCHAIN/bin/autoreconf --verbose --force -I $ACLOCAL_DIR"
-    fi
+    export AUTORECONF="$TOOLCHAIN/bin/autoreconf --verbose --force --install -I $ACLOCAL_DIR"
     $AUTORECONF $@
   fi
 }
@@ -784,14 +635,20 @@ find_path() {
     fi
   fi
 
-  if [ -n "$match" ]; then
-    FOUND_PATH="$match"
-    [ "${VERBOSE_FIND_PATH,,}" = "yes" ] && echo "find_path: Searching for $ftype: \"$search\", found: \"$FOUND_PATH\"" >&2
-    return 0
-  else
-    unset FOUND_PATH
-    [ "${VERBOSE_FIND_PATH,,}" = "yes" ] && echo "find_path: Searching for $ftype: \"$search\" - not found" >&2
-    return 1
+  if [ ! -e $linux_config_dir/linux.$TARGET_ARCH.conf ] &&
+     ! ls $linux_config_dir/*/linux.$TARGET_ARCH.conf &>/dev/null; then
+    check_arch="$check_arch\n $dashes$dashes$dashes"
+    check_arch="$check_arch\n ERROR: Architecture not found, use a valid Architecture"
+    check_arch="$check_arch\n for your project or create a new config"
+    check_arch="$check_arch\n $dashes$dashes$dashes"
+    check_arch="$check_arch\n\n Valid Architectures for your project: $PROJECT"
+
+    for arch in $linux_config_dir/*.conf $linux_config_dir/*/linux.$TARGET_ARCH.conf; do
+      [[ ${arch} =~ .*\*.* ]] && continue #ignore unexpanded wildcard
+      check_arch="$check_arch\n - $(basename $arch | cut -f2 -d".")"
+    done
+    echo -e $check_arch
+    exit 1
   fi
 }
 
@@ -1045,21 +902,10 @@ add_group() {
   fi
 }
 
-# Usage: enable_service <unit> [target]
-enable_service () {
-  local unit="$1"
-  local unit_dir="/usr/lib/systemd/system"
-  local target="$2"
-  local target_dir=$INSTALL
-
-  [ -f "$target_dir/$unit_dir/$unit" ] || die
-  if [ -z "$target" ] ; then
-    for target in `grep '^WantedBy' $target_dir/$unit_dir/$unit | cut -f2 -d=` ; do
-      if [ -n "$target" ]; then
-        mkdir -p ${target_dir}/$unit_dir/${target}.wants
-        ln -sf ../${unit} ${target_dir}/$unit_dir/${target}.wants/
-      fi
-    done
+# strip
+debug_strip() {
+  if [ ! "$DEBUG" = yes ]; then
+    find $* -type f -executable | xargs $STRIP 2>/dev/null || :
   fi
   for target in `grep '^Alias' $target_dir/$unit_dir/$unit | cut -f2 -d=` ; do
     if [ -n "$target" ]; then

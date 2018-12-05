@@ -3,8 +3,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libdnet"
-PKG_VERSION="8029bf9"
-PKG_SHA256="1e41cbe5e4884108b08fa92964305354f1662b7e889f62736b3749845d7a8c56"
+PKG_VERSION="1.12"
+PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="https://github.com/sgeto/libdnet"
 PKG_URL="https://github.com/sgeto/libdnet/archive/$PKG_VERSION.tar.gz"
@@ -20,10 +20,10 @@ PKG_CONFIGURE_OPTS_TARGET="ac_cv_func_strlcat=no \
                            --disable-python"
 
 pre_configure_target() {
-  export CFLAGS+=" -I$PKG_BUILD/include"
+  sed "s|@prefix@|$SYSROOT_PREFIX/usr|g" -i $PKG_BUILD/dnet-config.in
 }
 
 post_makeinstall_target() {
-  cp $SYSROOT_PREFIX/usr/bin/dnet-config \
-     $TOOLCHAIN/bin/dnet-config
+  mkdir -p $TOOLCHAIN/bin
+    cp dnet-config $TOOLCHAIN/bin/
 }

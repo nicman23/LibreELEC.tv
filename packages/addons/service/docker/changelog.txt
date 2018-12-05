@@ -1,25 +1,16 @@
-118
-- Update to docker 18.06.1-ce
-
-117
-- Update to docker 17.10
-
-116
-- change to new project structure
-
-114
+8.1.114
 - Enable journald buildtag
 
-113
+8.1.113
 - Update to docker 1.13.1
 - Update to golang 1.7.5
 
-112
+8.1.112
 - Update to docker 1.13.0
 - Use journald log driver
 - Add docker-init (tini)
 
-111
+8.1.111
 - Add temporary cleanup for old systemd service
 
 110

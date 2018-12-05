@@ -2,12 +2,12 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="dtc"
-PKG_VERSION="1.4.5"
-PKG_SHA256="cfb9394690ebec1e4f942ee0c3b863b660eb0c4ef85bab19429f30c3469a3415"
+PKG_VERSION="1.4.4"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/"
 PKG_URL="https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/$PKG_VERSION.tar.gz"
-PKG_DEPENDS_HOST="Python2:host swig:host"
+PKG_SOURCE_DIR="$PKG_VERSION"
 PKG_DEPENDS_TARGET="toolchain"
 PKG_LONGDESC="The Device Tree Compiler"
 
@@ -34,8 +34,4 @@ pre_make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
     cp -P $PKG_BUILD/dtc $INSTALL/usr/bin
-    cp -P $PKG_BUILD/fdtput $INSTALL/usr/bin/
-    cp -P $PKG_BUILD/fdtget $INSTALL/usr/bin/
-  mkdir -p $INSTALL/usr/lib
-    cp -P $PKG_BUILD/libfdt/libfdt.so $INSTALL/usr/lib/
 }

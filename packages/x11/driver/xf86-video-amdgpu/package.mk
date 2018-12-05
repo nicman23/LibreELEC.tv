@@ -2,8 +2,7 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="xf86-video-amdgpu"
-PKG_VERSION="18.1.0"
-PKG_SHA256="e11f25bb51d718b8ea938ad2b8095323c0ab16f4ddffd92091d80f9a445a9672"
+PKG_VERSION="1.2.0"
 PKG_ARCH="x86_64"
 PKG_LICENSE="OSS"
 PKG_SITE="http://www.x.org/"

@@ -2,8 +2,8 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="fribidi"
-PKG_VERSION="1.0.1"
-PKG_SHA256="c1b182d70590b6cdb5545bab8149de33b966800f27f2d9365c68917ed5a174e4"
+PKG_VERSION="0.19.7"
+PKG_ARCH="any"
 PKG_LICENSE="LGPL"
 PKG_SITE="http://fribidi.freedesktop.org/"
 PKG_URL="https://github.com/fribidi/fribidi/releases/download/v$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.bz2"

@@ -2,8 +2,8 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="bluez"
-PKG_VERSION="5.50"
-PKG_SHA256="c44b776660bf78e664e388b979da152976296e444dece833f3ddbd5be5a3b1b4"
+PKG_VERSION="5.43"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.bluez.org/"
 PKG_URL="https://git.kernel.org/pub/scm/bluetooth/bluez.git/snapshot/$PKG_NAME-$PKG_VERSION.tar.gz"
@@ -56,12 +56,6 @@ post_makeinstall_target() {
     sed -i $INSTALL/etc/bluetooth/main.conf \
         -e "s|^#\[Policy\]|\[Policy\]|g" \
         -e "s|^#AutoEnable.*|AutoEnable=true|g"
-
-  mkdir -p $INSTALL/usr/share/services
-    cp -P $PKG_DIR/default.d/*.conf $INSTALL/usr/share/services
-
-  # bluez looks in /etc/firmware/
-    ln -sf /usr/lib/firmware $INSTALL/etc/firmware
 }
 
 post_install() {

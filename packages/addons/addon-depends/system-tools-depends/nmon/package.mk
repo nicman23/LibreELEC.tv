@@ -3,7 +3,7 @@
 
 PKG_NAME="nmon"
 PKG_VERSION="411b08f"
-PKG_SHA256="aa88257728e820db10b1f04792dfcc1b8a483de51bfda70db016da016a4879a2"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/axibase/nmon"
 PKG_URL="https://github.com/axibase/nmon/archive/$PKG_VERSION.tar.gz"

@@ -2,8 +2,7 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="arm-mem"
-PKG_VERSION="a3277ce"
-PKG_SHA256="f571bbc43e3670c8f52447eb885f0c561ed039bcfb692678681899d7df13b165"
+PKG_VERSION="3aee5f4"
 PKG_ARCH="arm"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/bavison/arm-mem"

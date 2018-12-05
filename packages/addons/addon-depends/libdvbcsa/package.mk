@@ -2,8 +2,8 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="libdvbcsa"
-PKG_VERSION="aae3d0c"
-PKG_SHA256="2c0b69a5ca70c5032f9375a57bcec449ecdf93b5459f60f087f5fa06c605c7c1"
+PKG_VERSION="4ce8be8"
+PKG_ARCH="any"
 PKG_LICENSE="LGPL"
 PKG_SITE="http://www.videolan.org/developers/libdvbcsa.html"
 PKG_SITE="https://github.com/glenvt18/libdvbcsa/"

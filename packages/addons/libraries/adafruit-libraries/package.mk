@@ -3,7 +3,7 @@
 
 PKG_NAME="adafruit-libraries"
 PKG_VERSION=""
-PKG_REV="107"
+PKG_REV="102"
 PKG_ARCH="any"
 PKG_ADDON_PROJECTS="RPi"
 PKG_LICENSE="MIT"
@@ -12,7 +12,8 @@ PKG_URL=""
 PKG_DEPENDS_TARGET="Adafruit_Python_ADS1x15 Adafruit_Python_ADXL345 Adafruit_Python_BMP Adafruit_Python_CharLCD Adafruit_Python_DHT Adafruit_Python_GPIO Adafruit_Python_LED_Backpack Adafruit_Python_LSM303 Adafruit_Python_MCP3008 Adafruit_Python_MCP4725 Adafruit_Python_PCA9685 Adafruit_Python_PureIO Adafruit_Python_SI1145 Adafruit_Python_SSD1306 Adafruit_Python_TCS34725 Adafruit_Python_VCNL40xx Adafruit_Python_WS2801"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="A bundle of libraries from Adafruit"
-PKG_LONGDESC="This is a bundle of various Adafruit Python libraries. Included are: ADS1x15, ADXL345, BMP, CharLCD, DHT, GPIO, LED_Backpack, LSM303, MCP3008, MCP4725, PCA9685, PureIO, SI1145, SSD1306, TCS34725, VCNL40xx, WS2801"
+PKG_LONGDESC="This is a bundle of various Adafruit Python libraries. Included are: ADS1x15, ADXL345, BMP, CharLCD, DHT, GPIO, LED_Backpack, LSM303, MCP3008, MCP4725, PCA9685, PureIO, SI1145, TCS34725, VCNL40xx, WS2801"
+PKG_AUTORECONF="no"
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="Adafruit Libraries"

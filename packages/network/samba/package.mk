@@ -3,15 +3,19 @@
 # Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="samba"
-PKG_VERSION="4.9.3"
-PKG_SHA256="cf8fd8707e9ad7bce7832006aac5644155165745ba371170661b3004fa2135cf"
+PKG_VERSION="4.6.14"
+PKG_ARCH="any"
 PKG_LICENSE="GPLv3+"
 PKG_SITE="https://www.samba.org"
 PKG_URL="https://download.samba.org/pub/samba/stable/$PKG_NAME-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain attr heimdal:host e2fsprogs Python2 zlib readline popt libaio connman"
+PKG_DEPENDS_TARGET="toolchain heimdal:host e2fsprogs Python zlib readline popt libaio connman"
 PKG_NEED_UNPACK="$(get_pkg_directory heimdal) $(get_pkg_directory e2fsprogs)"
-PKG_LONGDESC="A free SMB / CIFS fileserver and client."
-PKG_BUILD_FLAGS="-gold"
+PKG_SECTION="network"
+PKG_SHORTDESC="samba: The free SMB / CIFS fileserver and client"
+PKG_LONGDESC="Samba is a SMB server that runs on Unix and other operating systems. It allows these operating systems (currently Unix, Netware, OS/2 and AmigaDOS) to act as a file and print server for SMB and CIFS clients. There are many Lan-Manager compatible clients such as LanManager for DOS, Windows for Workgroups, Windows NT, Windows 95, Linux smbfs, OS/2, Pathworks and more."
+
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
 
 PKG_MAKE_OPTS_TARGET="V=1"
 
@@ -20,12 +24,6 @@ if [ "$AVAHI_DAEMON" = yes ]; then
   SMB_AVAHI="--enable-avahi"
 else
   SMB_AVAHI="--disable-avahi"
-fi
-
-if [ "$TARGET_ARCH" = x86_64 ]; then
-  SMB_AESNI="--accel-aes=intelaesni"
-else
-  SMB_AESNI="--accel-aes=none"
 fi
 
 PKG_CONFIGURE_OPTS="--prefix=/usr \
@@ -50,7 +48,6 @@ PKG_CONFIGURE_OPTS="--prefix=/usr \
                     --disable-rpath-install \
                     --disable-rpath-private-install \
                     $SMB_AVAHI \
-                    $SMB_AESNI \
                     --disable-cups \
                     --disable-iprint \
                     --disable-gnutls \
@@ -67,7 +64,6 @@ PKG_CONFIGURE_OPTS="--prefix=/usr \
                     --without-gpgme \
                     --without-iconv \
                     --without-ldap \
-                    --without-libarchive \
                     --without-pam \
                     --without-pie \
                     --without-regedit \
@@ -78,25 +74,26 @@ PKG_CONFIGURE_OPTS="--prefix=/usr \
                     --bundled-libraries='ALL,!asn1_compile,!compile_et,!zlib' \
                     --without-quotas \
                     --with-syslog  \
-                    --without-json-audit \
-                    --without-ldb-lmdb \
                     --nopyc --nopyo"
 
-PKG_SAMBA_TARGET="smbclient,client/smbclient,smbtree,testparm"
+PKG_SAMBA_TARGET="smbclient"
 
 [ "$SAMBA_SERVER" = "yes" ] && PKG_SAMBA_TARGET+=",smbd/smbd,nmbd,smbpasswd"
+[ "$DEVTOOLS" = "yes" ] && PKG_SAMBA_TARGET+=",client/smbclient,smbtree,testparm"
 
 pre_configure_target() {
 # samba uses its own build directory
   cd $PKG_BUILD
     rm -rf .$TARGET_NAME
+# samba fails to build with gold support
+  strip_gold
 
 # work around link issues
   export LDFLAGS="$LDFLAGS -lreadline"
 
 # support 64-bit offsets and seeks on 32-bit platforms
   if [ "$TARGET_ARCH" = "arm" ]; then
-    export CFLAGS+=" -D_FILE_OFFSET_BITS=64 -D_OFF_T_DEFINED_ -Doff_t=off64_t -Dlseek=lseek64"
+    export CFLAGS+="-D_FILE_OFFSET_BITS=64 -D_OFF_T_DEFINED_ -Doff_t=off64_t -Dlseek=lseek64"
   fi
 }
 
@@ -122,24 +119,29 @@ post_makeinstall_target() {
   rm -rf $INSTALL/usr/bin
   rm -rf $INSTALL/usr/lib/python*
   rm -rf $INSTALL/usr/share/perl*
-  rm -rf $INSTALL/usr/lib64
 
   mkdir -p $INSTALL/usr/lib/samba
     cp $PKG_DIR/scripts/samba-config $INSTALL/usr/lib/samba
-    cp $PKG_DIR/scripts/smbd-config $INSTALL/usr/lib/samba
-    cp $PKG_DIR/scripts/samba-autoshare $INSTALL/usr/lib/samba
 
-  if find_file_path config/smb.conf; then
-    mkdir -p $INSTALL/etc/samba
-      cp ${FOUND_PATH} $INSTALL/etc/samba
+  mkdir -p $INSTALL/etc/samba
+  if [ -n "$DEVICE" -a -f $PROJECT_DIR/$PROJECT/devices/$DEVICE/config/smb.conf ]; then
+    cp $PROJECT_DIR/$PROJECT/devices/$DEVICE/config/smb.conf $INSTALL/etc/samba
+  elif [ -f $PROJECT_DIR/$PROJECT/config/smb.conf ]; then
+    cp $PROJECT_DIR/$PROJECT/config/smb.conf $INSTALL/etc/samba
+  elif [ -f $DISTRO_DIR/$DISTRO/config/smb.conf ]; then
+    cp $DISTRO_DIR/$DISTRO/config/smb.conf $INSTALL/etc/samba
+  else
+    cp $PKG_DIR/config/smb.conf $INSTALL/etc/samba
     mkdir -p $INSTALL/usr/config
-      cp $INSTALL/etc/samba/smb.conf $INSTALL/usr/config/samba.conf.sample
+      cp $PKG_DIR/config/smb.conf $INSTALL/usr/config/samba.conf.sample
   fi
 
-  mkdir -p $INSTALL/usr/bin
-    cp -PR bin/default/source3/client/smbclient $INSTALL/usr/bin
-    cp -PR bin/default/source3/utils/smbtree $INSTALL/usr/bin
-    cp -PR bin/default/source3/utils/testparm $INSTALL/usr/bin
+  if [ "$DEVTOOLS" = "yes" ]; then
+    mkdir -p $INSTALL/usr/bin
+      cp -PR bin/default/source3/client/smbclient $INSTALL/usr/bin
+      cp -PR bin/default/source3/utils/smbtree $INSTALL/usr/bin
+      cp -PR bin/default/source3/utils/testparm $INSTALL/usr/bin
+  fi
 
   if [ "$SAMBA_SERVER" = "yes" ]; then
     mkdir -p $INSTALL/usr/bin
@@ -150,6 +152,10 @@ post_makeinstall_target() {
 
     mkdir -p $INSTALL/usr/share/services
       cp -P $PKG_DIR/default.d/*.conf $INSTALL/usr/share/services
+
+    mkdir -p $INSTALL/usr/lib/samba
+      cp $PKG_DIR/scripts/samba-autoshare $INSTALL/usr/lib/samba
+      cp $PKG_DIR/scripts/smbd-config $INSTALL/usr/lib/samba
   fi
 }
 

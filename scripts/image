@@ -62,14 +62,17 @@ fi
 LIBREELEC_ARCH="${DEVICE:-$PROJECT}.$TARGET_ARCH"
 TARGET_VERSION="$LIBREELEC_ARCH-$LIBREELEC_VERSION"
 
-if [ -n "$CUSTOM_IMAGE_NAME" ]; then
-  IMAGE_NAME="$CUSTOM_IMAGE_NAME"
-else
-  if [ "$DEVEL_VERSION" = "devel" ]; then
-    IMAGE_NAME="$DISTRONAME-$LIBREELEC_ARCH-$OS_VERSION-$LIBREELEC_VERSION"
-  else
-    IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
-  fi
+LIBREELEC_ARCH="${DEVICE:-$PROJECT}.$TARGET_ARCH"
+TARGET_VERSION="$LIBREELEC_ARCH-$LIBREELEC_VERSION"
+IMAGE_NAME="$DISTRONAME-$TARGET_VERSION"
+
+if [ "$DEVEL_VERSION" = "devel" ] ; then
+  IMAGE_NAME="$DISTRONAME-$LIBREELEC_ARCH-$OS_VERSION-$LIBREELEC_VERSION"
+fi
+
+if [ "$PROJECT" == "imx6" -a -n "$SYSTEM" ]; then
+  IMAGE_NAME="$IMAGE_NAME-$SYSTEM"
+fi
 
   if [ -n "$UBOOT_SYSTEM" ] && [ "$UBOOT_SYSTEM" != "${DEVICE:-$PROJECT}" ]; then
     IMAGE_NAME="$IMAGE_NAME-$UBOOT_SYSTEM"
@@ -210,12 +213,11 @@ if [ -n "$DEVICE" -a -d "$PROJECT_DIR/$PROJECT/devices/$DEVICE/filesystem" ]; th
   done
 fi
 
-# run depmod for base overlay modules
-MODVER=$(basename $(ls -d $INSTALL/usr/lib/kernel-overlays/base/lib/modules/*))
-find $INSTALL/usr/lib/kernel-overlays/base/lib/modules/$MODVER/ -name *.ko | \
-  sed -e "s,$INSTALL/usr/lib/kernel-overlays/base/lib/modules/$MODVER/,," \
-    > $INSTALL/usr/lib/kernel-overlays/base/lib/modules/$MODVER/modules.order
-$TOOLCHAIN/bin/depmod -b $INSTALL/usr/lib/kernel-overlays/base -a -e -F "$BUILD/linux-$(kernel_version)/System.map" $MODVER
+# run depmod
+MODVER=$(basename $(ls -d $INSTALL/usr/lib/modules/*))
+find $INSTALL/usr/lib/modules/$MODVER/ -name *.ko | \
+  sed -e "s,$INSTALL/usr/lib/modules/$MODVER/,," > $INSTALL/usr/lib/modules/$MODVER/modules.order
+$TOOLCHAIN/bin/depmod -b $INSTALL/usr -a -e -F "$BUILD/linux-$(kernel_version)/System.map" $MODVER
 
 # strip kernel modules
 for MOD in $(find $INSTALL/usr/lib/kernel-overlays/ -type f -name *.ko); do
@@ -249,7 +251,7 @@ fi
 
 # create squashfs file, default to gzip if no compression configured
 echo "rm -rf \"$TARGET_IMG/$IMAGE_NAME.system\"" >> $FAKEROOT_SCRIPT
-echo "$TOOLCHAIN/bin/mksquashfs \"$BUILD/image/system\" \"$TARGET_IMG/$IMAGE_NAME.system\" -noappend -comp ${SQUASHFS_COMPRESSION:-gzip} ${SQUASHFS_COMPRESSION_OPTION}" >> $FAKEROOT_SCRIPT
+echo "$TOOLCHAIN/bin/mksquashfs \"$BUILD/image/system\" \"$TARGET_IMG/$IMAGE_NAME.system\" -noappend -comp $SQUASHFS_COMPRESSION" >> $FAKEROOT_SCRIPT
 
 # run fakeroot
 $TOOLCHAIN/bin/fakeroot -- $FAKEROOT_SCRIPT
@@ -271,17 +273,18 @@ if [ "$1" = "release" -o "$1" = "mkimage" -o "$1" = "amlpkg" -o "$1" = "noobs" ]
   # remove n previous created release image
   rm -rf $TARGET_IMG/$IMAGE_NAME.img.gz
 
-  if [ -n "$BOOTLOADER" ]; then
-
     BOOTLOADER_DIR="$(get_pkg_directory "$BOOTLOADER")"
 
     if [ -d $BOOTLOADER_DIR/files ]; then
       cp -R $BOOTLOADER_DIR/files/* $RELEASE_DIR
     fi
 
-    if find_file_path bootloader/release $BOOTLOADER_DIR/release; then
-      echo "Running $FOUND_PATH"
-      . $FOUND_PATH
+    if [ -n "$DEVICE" -a -f $PROJECT_DIR/$PROJECT/devices/$DEVICE/bootloader/release ]; then
+      . $PROJECT_DIR/$PROJECT/devices/$DEVICE/bootloader/release
+    elif [ -f $PROJECT_DIR/$PROJECT/bootloader/release ]; then
+      . $PROJECT_DIR/$PROJECT/bootloader/release
+    elif [ -f $BOOTLOADER_DIR/release ]; then
+      . $BOOTLOADER_DIR/release
     fi
   fi
 
@@ -477,7 +480,7 @@ if [ "$1" = "release" -o "$1" = "mkimage" -o "$1" = "amlpkg" -o "$1" = "noobs" ]
 
     BOOTLOADER_DIR="$(get_pkg_directory "$BOOTLOADER")"
     if [ -d $BOOTLOADER_DIR/files/3rdparty/bootloader/ ]; then
-      cp -PR $BOOTLOADER_DIR/files/3rdparty/bootloader/* $RELEASE_DIR/${NOOBS_DISTRO}/System
+      cp -PR $BOOTLOADER_DIR/files/3rdparty/bootloader/* $RELEASE_DIR/${DISTRONAME}_${PROJECT}/System
     fi
 
     # copy Bootloader
@@ -517,13 +520,13 @@ if [ "$1" = "release" -o "$1" = "mkimage" -o "$1" = "amlpkg" -o "$1" = "noobs" ]
     # create Storage dir
     mkdir -p $RELEASE_DIR/${NOOBS_DISTRO}/Storage
 
-    # remove any previously created release tarball
-    rm -rf $RELEASE_DIR/${NOOBS_DISTRO}/System.tar.xz
-    rm -rf $RELEASE_DIR/${NOOBS_DISTRO}/Storage.tar.xz
+    # remove an previous created release tarball
+    rm -rf $RELEASE_DIR/${DISTRONAME}_${PROJECT}/System.tar.xz
+    rm -rf $RELEASE_DIR/${DISTRONAME}_${PROJECT}/Storage.tar.xz
 
     # create filesystem tarballs
-    tar cJf $RELEASE_DIR/${NOOBS_DISTRO}/System.tar.xz -C $RELEASE_DIR/${NOOBS_DISTRO}/System/ .
-    tar cJf $RELEASE_DIR/${NOOBS_DISTRO}/Storage.tar.xz -C $RELEASE_DIR/${NOOBS_DISTRO}/Storage/ .
+    tar cJf $RELEASE_DIR/${DISTRONAME}_${PROJECT}/System.tar.xz -C $RELEASE_DIR/${DISTRONAME}_${PROJECT}/System/ .
+    tar cJf $RELEASE_DIR/${DISTRONAME}_${PROJECT}/Storage.tar.xz -C $RELEASE_DIR/${DISTRONAME}_${PROJECT}/Storage/ .
 
     # remove filesystem dirs
     rm -rf $RELEASE_DIR/${NOOBS_DISTRO}/System

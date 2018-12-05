@@ -2,8 +2,14 @@
 # Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
 
 PKG_NAME="wetekdvb"
-PKG_VERSION="20180222"
-PKG_SHA256="9deb42ede05082279da971edf1ec0133c0f5da6edcae9d69c04f022fc91c7d6c"
+case "$PROJECT" in
+  WeTek_Play)
+    PKG_VERSION="20170116"
+    ;;
+  *)
+    PKG_VERSION="20170404"
+    ;;
+esac
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://www.wetek.com/"

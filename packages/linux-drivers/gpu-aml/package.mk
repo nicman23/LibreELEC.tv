@@ -29,25 +29,12 @@ pre_make_target() {
 }
 
 make_target() {
-  if [ "$MESON_FAMILY" = "gxm" ] ; then
-    kernel_make -C $(kernel_path) M=$PKG_MIDGARD_BUILD_DIR \
-    EXTRA_CFLAGS="-DCONFIG_MALI_PLATFORM_DEVICETREE -DCONFIG_MALI_BACKEND=gpu" \
-      CONFIG_MALI_MIDGARD=m CONFIG_MALI_PLATFORM_DEVICETREE=y CONFIG_MALI_BACKEND=gpu modules
-  else
-    kernel_make -C $(kernel_path) M=$PKG_UTGARD_BUILD_DIR \
-      EXTRA_CFLAGS="-DCONFIG_MALI450=y" \
-      CONFIG_MALI400=m CONFIG_MALI450=y
-  fi
+  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/mali \
+    CONFIG_MALI400=m CONFIG_MALI450=m
 }
 
 makeinstall_target() {
-  if [ "$MESON_FAMILY" = "gxm" ] ; then
-    kernel_make -C $(kernel_path) M=$PKG_MIDGARD_BUILD_DIR \
-      INSTALL_MOD_PATH=$INSTALL/$(get_kernel_overlay_dir) INSTALL_MOD_STRIP=1 DEPMOD=: \
-    modules_install
-  else
-    kernel_make -C $(kernel_path) M=$PKG_UTGARD_BUILD_DIR \
-      INSTALL_MOD_PATH=$INSTALL/$(get_kernel_overlay_dir) INSTALL_MOD_STRIP=1 DEPMOD=: \
-    modules_install
-  fi
+  LDFLAGS="" make -C $(kernel_path) M=$PKG_BUILD/mali \
+    INSTALL_MOD_PATH=$INSTALL/usr INSTALL_MOD_STRIP=1 DEPMOD=: \
+  modules_install
 }

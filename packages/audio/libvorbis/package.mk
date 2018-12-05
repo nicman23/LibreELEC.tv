@@ -3,8 +3,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libvorbis"
-PKG_VERSION="1.3.6"
-PKG_SHA256="af00bb5a784e7c9e69f56823de4637c350643deedaf333d0fa86ecdba6fcb415"
+PKG_VERSION="1.3.5"
+PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://www.vorbis.com/"
 PKG_URL="http://downloads.xiph.org/releases/vorbis/libvorbis-$PKG_VERSION.tar.xz"
@@ -17,5 +17,8 @@ PKG_CONFIGURE_OPTS_TARGET="--enable-static \
                            --disable-shared \
                            --with-ogg=$SYSROOT_PREFIX/usr \
                            --disable-docs \
-                           --disable-examples \
-                           --disable-oggtest"
+                           --disable-examples"
+
+pre_configure_target() {
+  export CFLAGS="$CFLAGS -fPIC"
+}

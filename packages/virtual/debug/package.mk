@@ -3,10 +3,11 @@
 
 PKG_NAME="debug"
 PKG_VERSION=""
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.openelec.tv"
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain gdb edid-decode memtester"
+PKG_DEPENDS_TARGET="toolchain gdb memtester"
 PKG_SECTION="virtual"
 PKG_LONGDESC="debug is a Metapackage for installing debugging tools"
 

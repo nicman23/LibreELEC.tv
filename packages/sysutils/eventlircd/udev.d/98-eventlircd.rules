@@ -61,8 +61,13 @@ SUBSYSTEMS=="rc", \
   ENV{eventlircd_evmap}="default.evmap"
 
 #-------------------------------------------------------------------------------
-# Ask eventlircd to handle input event devices.
+# Ask eventlircd to handle power button and input event devices.
 #-------------------------------------------------------------------------------
+
+# Xiaomi Mi Box USA remote
+SUBSYSTEMS=="input", ATTRS{name}=="Xiaomi Remote", \
+  ENV{eventlircd_enable}="true", \
+  ENV{eventlircd_evmap}="xiaomibtremote.evmap"
 
 # Xiaomi Mi Box USA remote
 SUBSYSTEMS=="input", ATTRS{name}=="Xiaomi Remote", \

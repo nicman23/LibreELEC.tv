@@ -2,8 +2,7 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="picamera"
-PKG_VERSION="1.13"
-PKG_SHA256="890815aa01e4d855a6a95dd3ad0953b872a6b954982106407df0c5a31a163e50"
+PKG_VERSION="1.10"
 PKG_ARCH="arm"
 PKG_LICENSE="BSD"
 PKG_SITE="https://github.com/waveform80/picamera"

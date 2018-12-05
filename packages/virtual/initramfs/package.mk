@@ -3,6 +3,7 @@
 
 PKG_NAME="initramfs"
 PKG_VERSION=""
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.openelec.tv"
 PKG_URL=""
@@ -22,7 +23,7 @@ fi
 
 post_install() {
   ( cd $BUILD/initramfs
-    if [ "$TARGET_ARCH" = "x86_64" ]; then
+    if [ "$TARGET_ARCH" = "x86_64" -o "$TARGET_ARCH" = "powerpc64" ]; then
       ln -sf /usr/lib $BUILD/initramfs/lib64
       mkdir -p $BUILD/initramfs/usr
       ln -sf /usr/lib $BUILD/initramfs/usr/lib64

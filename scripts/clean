@@ -15,12 +15,12 @@ clean_package() {
   fi
 
   # Use a wilcard here to remove all versions of the package
-  for i in "${BUILD}/${1}-"*; do
-    if [ -d "${i}" -a -f "${i}/.libreelec-unpack" ]; then
-      . "${i}/.libreelec-unpack"
-      if [ "${STAMP_PKG_NAME}" = "${1}" ]; then
-        build_msg "CLR_WARNING" "*" "$(print_color "CLR_WARNING_DIM" "Removing ${i} ...")"
-        rm -rf "${i}"
+  for i in $BUILD/$1-*; do
+    if [ -d $i -a -f "$i/.libreelec-unpack" ] ; then
+      . "$i/.libreelec-unpack"
+      if [ "$STAMP_PKG_NAME" = "$1" ]; then
+        printf "%${BUILD_INDENT}c ${boldred}*${endcolor} ${red}Removing $i ...${endcolor}\n" ' '>&$SILENT_OUT
+        rm -rf $i
       fi
     else
       # force clean if no stamp found (previous unpack failed)

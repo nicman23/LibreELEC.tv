@@ -3,7 +3,6 @@
 
 PKG_NAME="syslinux"
 PKG_VERSION="6.03"
-PKG_SHA256="26d3986d2bea109d5dc0e4f8c4822a459276cf021125e8c9f23c3cca5d8c850e"
 PKG_ARCH="x86_64"
 PKG_LICENSE="GPL"
 PKG_SITE="http://syslinux.zytor.com/"
@@ -49,6 +48,7 @@ make_host() {
 
 makeinstall_host() {
   mkdir -p $TOOLCHAIN/bin
+    cp bios/extlinux/extlinux $TOOLCHAIN/bin
     cp bios/linux/syslinux $TOOLCHAIN/bin
     cp bios/mtools/syslinux $TOOLCHAIN/bin/syslinux.mtools
 

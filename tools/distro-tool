@@ -357,6 +357,8 @@ class MyUtility(object):
 
   @staticmethod
   def get_package(msgs, package_name, package_source, package_url, package_sha):
+    onsource = False
+    onmirror = False
 
     onsource = MyUtility.remote_file_exists(msgs, package_url)
     onmirror = MyUtility.remote_file_exists(msgs, "%s/%s/%s" % (DISTRO_MIRROR, package_name, package_source))
@@ -813,7 +815,7 @@ generate_work_worker() {
   local pcount=$1 worker="$2" revision="$3"
   local workfile_i="$(printf "%s.%02d" "${WORKFILES_I}" ${worker})"
   local workfile_o="$(printf "%s.%02d" "${WORKFILES_O}" ${worker})"
-  local wanted_vars="PKG_NAME PKG_VERSION PKG_URL PKG_SHA256 PKG_DIR PKG_SECTION PKG_IS_ADDON PKG_SOURCE_NAME"
+  local wanted_vars="PKG_NAME PKG_VERSION PKG_URL PKG_SHA256 PKG_SECTION PKG_IS_ADDON PKG_SOURCE_NAME"
   local package_name var comma PKG_URL PKG_SOURCE_NAME PKG_VERSION PKG_IS_ADDON
 
   [ -f "${workfile_i}" ] || return 0

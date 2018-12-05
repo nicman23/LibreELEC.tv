@@ -1,15 +1,26 @@
 #!/bin/bash
-
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 if [ -z "$1" ]; then
   echo "Usage: $0 <branch-name>"
   exit 0
 fi
-
-ROOT=$(cd $(dirname $0)/../.. && pwd)
 
 KODI_BRANCH="$1"
 KODI_DIR="kodi-${KODI_BRANCH}.git"
@@ -164,7 +175,7 @@ for addontxt in $KODI_DIR/cmake/addons/bootstrap/repositories/*-addons.txt ; do
       continue
     fi
 
-    if [ -f ${ROOT}/packages/mediacenter/kodi-binary-addons/$ADDON/package.mk ] ; then
+    if [ -f ../../packages/mediacenter/kodi-binary-addons/$ADDON/package.mk ] ; then
       git_clone $REPO ${KODI_BRANCH} $PKG_NAME.git $GIT_HASH
 
       # update package.mk
